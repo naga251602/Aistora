@@ -1,0 +1,21 @@
+name: Build Check
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t databridge-backend ./backend
+
+      - name: Build frontend image
+        run: docker build -t databridge-frontend ./frontend

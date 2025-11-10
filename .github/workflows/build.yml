@@ -1,21 +1,47 @@
-name: Build Check
+name: Aistora Build & Test Pipeline
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
 
 jobs:
-  build:
+  # ⚛️ FRONTEND TEST JOB
+  frontend-test:
     runs-on: ubuntu-latest
-
+    name: ⚛️ Build & Test Frontend
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build backend image
-        run: docker build -t databridge-backend ./backend
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Build frontend image
-        run: docker build -t databridge-frontend ./frontend
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+      - name: Run frontend tests
+        run: cd frontend && npm run test -- --run
+
+  # 🐍 BACKEND TEST JOB
+  backend-test:
+    runs-on: ubuntu-latest
+    name: 🐍 Build & Test Backend
+    needs: frontend-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt pytest
+
+      - name: Run backend tests
+        run: PYTHONPATH=. python -m pytest -v backend/tests

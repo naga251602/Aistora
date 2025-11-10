@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
+import { expect, test } from "vitest";
 import App from "./App";
 
-test("renders Aistora text", () => {
+test("renders Aistora status", () => {
   render(<App />);
-  expect(screen.getByText(/Aistora Frontend Active/i)).toBeInTheDocument();
+  expect(screen.getByText(/Aistora status/i)).toBeInTheDocument();
 });

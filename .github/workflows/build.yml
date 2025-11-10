@@ -7,10 +7,10 @@ on:
     branches: ["main", "dev"]
 
 jobs:
-  # ⚛️ FRONTEND TEST JOB
+  # FRONTEND TEST JOB
   frontend-test:
     runs-on: ubuntu-latest
-    name: ⚛️ Build & Test Frontend
+    name: Build & Test Frontend
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,3 +45,14 @@ jobs:
 
       - name: Run backend tests
         run: PYTHONPATH=. python -m pytest -v backend/tests
+
+    frontend-integration:
+      name: Frontend Integration Test
+      runs-on: ubuntu-latest
+      needs: backend-test
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+        - run: cd frontend && npm ci && npm run test -- --run

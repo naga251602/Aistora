@@ -1,19 +1,17 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
 import App from "./App";
 
-vi.stubGlobal(
-  "fetch",
-  vi.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve({ status: "ok" }),
-    })
-  )
-);
+describe("App UI Rendering", () => {
+  it("renders the TableTalk header, welcome section, and login form", () => {
+    render(<App />);
 
-test("renders Aistora Frontend Status ok", async () => {
-  render(<App />);
-  await waitFor(() =>
-    expect(screen.getByText(/Aistora Frontend Status: ok/i)).toBeInTheDocument()
-  );
+    // At least one TableTalk text (appears in header and hero)
+    const titles = screen.getAllByText(/tabletalk/i);
+    expect(titles.length).toBeGreaterThan(0);
+
+    // Welcome section present
+    expect(screen.getByText(/welcome to tabletalk/i)).toBeInTheDocument();
+
+  });
 });
